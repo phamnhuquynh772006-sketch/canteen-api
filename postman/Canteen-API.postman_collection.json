@@ -1,0 +1,566 @@
+{
+  "info": {
+    "_postman_id": "03582d63-1722-40ae-a272-f171a641a4d4",
+    "name": "Canteen API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "59259786",
+    "_collection_link": "https://go.postman.co/collection/59259786-03582d63-1722-40ae-a272-f171a641a4d4?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "01-Read",
+      "item": [
+        {
+          "name": "TC01 - GET health",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "\r\npm.test(\"200 OK\", () => {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"status = ok\", () => {\r\n    pm.expect(pm.response.json().status).to.eql(\"ok\");\r\n});\r\n"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "health"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC02 - GET menu items",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "\r\npm.test(\"200 OK\", () => {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Có 4 món mẫu\", () => {\r\n    pm.expect(pm.response.json()).to.have.lengthOf(4);\r\n});\r\n"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/menu-items",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "menu-items"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC03 - Filter bun pho",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "\r\npm.test(\"200 OK\", () => {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\nconst items = pm.response.json();\r\n\r\npm.test(\"Chỉ có món bun_pho\", () => {\r\n    items.forEach(i => {\r\n        pm.expect(i.category).to.eql(\"bun_pho\");\r\n    });\r\n});\r\n\r\npm.test(\"Giá giảm dần\", () => {\r\n    for (let k = 1; k < items.length; k++) {\r\n        pm.expect(items[k - 1].price)\r\n            .to.be.at.least(items[k].price);\r\n    }\r\n});\r\n"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/menu-items?category=bun_pho&sort=price&order=desc",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "menu-items"
+              ],
+              "query": [
+                {
+                  "key": "category",
+                  "value": "bun_pho"
+                },
+                {
+                  "key": "sort",
+                  "value": "price"
+                },
+                {
+                  "key": "order",
+                  "value": "desc"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC04 - GET unavailable",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "\r\npm.test(\"200 OK\", () => {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\nconst list = pm.response.json();\r\n\r\npm.test(\"Có 1 món đã hết\", () => {\r\n    pm.expect(list).to.have.lengthOf(1);\r\n});\r\n\r\npm.test(\"Là Bánh đa cua\", () => {\r\n    pm.expect(list[0].name).to.eql(\"Bánh đa cua\");\r\n});\r\n"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/menu-items?available=false",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "menu-items"
+              ],
+              "query": [
+                {
+                  "key": "available",
+                  "value": "false"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC05 - GET item 1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "\r\npm.test(\"200 OK\", () => {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Đúng id = 1\", () => {\r\n    pm.expect(pm.response.json().id).to.eql(1);\r\n});\r\n"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/menu-items/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "menu-items",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC06 - GET item 999",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "\r\npm.test(\"404 Not Found\", () => {\r\n    pm.response.to.have.status(404);\r\n});\r\n"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/menu-items/999",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "menu-items",
+                "999"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC07 - GET item 0",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "\r\npm.test(\"422 Unprocessable Entity\", () => {\r\n    pm.response.to.have.status(422);\r\n});\r\n"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/menu-items/0",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "menu-items",
+                "0"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "02-Create",
+      "item": [
+        {
+          "name": "TC08 - POST create item",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "\r\npm.collectionVariables.set(\r\n    \"itemName\",\r\n    \"Món thử \" + Date.now()\r\n);\r\n"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "\r\npm.test(\"201 Created\", () => {\r\n    pm.response.to.have.status(201);\r\n});\r\n\r\nconst item = pm.response.json();\r\n\r\npm.test(\"Có header Location đúng\", () => {\r\n    pm.expect(pm.response.headers.get(\"Location\"))\r\n        .to.eql(\"/menu-items/\" + item.id);\r\n});\r\n\r\npm.test(\"Mặc định available = true\", () => {\r\n    pm.expect(item.available).to.be.true;\r\n});\r\n\r\npm.collectionVariables.set(\"itemId\", item.id);\r\n"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "\r\n{\r\n    \"name\": \"{{itemName}}\",\r\n    \"category\": \"an_vat\",\r\n    \"price\": 15000\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/menu-items",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "menu-items"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "03-Update",
+      "item": [
+        {
+          "name": "TC09 - PUT update item",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "\r\npm.test(\"200 OK\", () => {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Giá đổi thành 20000\", () => {\r\n    pm.expect(pm.response.json().price).to.eql(20000);\r\n});\r\n"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "\r\n{\r\n    \"name\": \"{{itemName}} sửa\",\r\n    \"category\": \"an_vat\",\r\n    \"price\": 20000,\r\n    \"available\": true\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/menu-items/{{itemId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "menu-items",
+                "{{itemId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC10 - PATCH unavailable",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "\r\npm.test(\"200 OK\", () => {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\nconst it = pm.response.json();\r\n\r\npm.test(\"available = false\", () => {\r\n    pm.expect(it.available).to.be.false;\r\n});\r\n\r\npm.test(\"Giá giữ nguyên 20000\", () => {\r\n    pm.expect(it.price).to.eql(20000);\r\n});\r\n"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "\r\n{\r\n    \"available\": false\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/menu-items/{{itemId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "menu-items",
+                "{{itemId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC11 - PATCH duplicate name",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "\r\npm.test(\"409 Conflict\", () => {\r\n    pm.response.to.have.status(409);\r\n});\r\n"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "\r\n{\r\n    \"name\": \"Trà chanh\"\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/menu-items/{{itemId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "menu-items",
+                "{{itemId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "04-Delete",
+      "item": [
+        {
+          "name": "TC12 - DELETE item",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "\r\npm.test(\"204 No Content\", () => {\r\n    pm.response.to.have.status(204);\r\n});\r\n"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/menu-items/{{itemId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "menu-items",
+                "{{itemId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC13 - GET deleted item",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "\r\npm.test(\"404 Not Found\", () => {\r\n    pm.response.to.have.status(404);\r\n});\r\n"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/menu-items/{{itemId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "menu-items",
+                "{{itemId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "05-Data-driven",
+      "item": [
+        {
+          "name": "DD - POST negative cases",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "\r\nconst c = pm.iterationData.get(\"case\");\r\nconst expected = Number(pm.iterationData.get(\"expected\"));\r\n\r\npm.test(`[${c}] trả về ${expected}`, () => {\r\n    pm.response.to.have.status(expected);\r\n});\r\n"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "\r\n{\r\n    \"name\": \"{{name}}\",\r\n    \"category\": \"{{category}}\",\r\n    \"price\": {{price}}\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/menu-items",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "menu-items"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "test",
+      "script": {
+        "exec": [
+          "\r",
+          "pm.test(\"Phản hồi dưới 500 ms\", () => {\r",
+          "    pm.expect(pm.response.responseTime).to.be.below(500);\r",
+          "});\r",
+          "\r",
+          "if (pm.response.code !== 204) {\r",
+          "    pm.test(\"Trả về JSON\", () => {\r",
+          "        pm.response.to.have.header(\r",
+          "            \"Content-Type\",\r",
+          "            \"application/json\"\r",
+          "        );\r",
+          "    });\r",
+          "}\r",
+          ""
+        ],
+        "type": "text/javascript"
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "exec": [
+          "\r",
+          "pm.test(\"Phản hồi dưới 500 ms\", () => {\r",
+          "    pm.expect(pm.response.responseTime).to.be.below(500);\r",
+          "});\r",
+          "\r",
+          "if (pm.response.code !== 204) {\r",
+          "    pm.test(\"Trả về JSON\", () => {\r",
+          "        pm.response.to.have.header(\r",
+          "            \"Content-Type\",\r",
+          "            \"application/json\"\r",
+          "        );\r",
+          "    });\r",
+          "}\r",
+          ""
+        ],
+        "type": "text/javascript"
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "itemName",
+      "value": ""
+    },
+    {
+      "key": "itemId",
+      "value": ""
+    }
+  ]
+}
